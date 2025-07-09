@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% load static %} {# <-- ADD THIS LINE #}
+
+{% block title %}{{ club.title }} Details{% endblock %} {# <-- ADD OR UPDATE THIS LINE #}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-md-10 mx-auto"> {# Using mx-auto for centering #}
+            <div class="card shadow-sm">
+                {# --- Club Image Display (from previous discussion) --- #}
+                {% if club.photo %} {# Use club.photo here, as per your models.py #}
+                    <img src="{{ club.photo.url }}" class="card-img-top" alt="{{ club.title }} Photo" style="height: 350px; object-fit: cover;">
+                {% else %}
+                    <img src="{% static 'img/default_club_image.png' %}" class="card-img-top" alt="Default Club Image" style="height: 350px; object-fit: cover;">
+                {% endif %}
+
+                <div class="card-body">
+                    <h1 class="card-title mb-3">{{ club.title }}</h1>
+                    <p class="card-text text-muted mb-2"><strong>Manager:</strong> {{ club.manager.username }}</p>
+                    <p class="card-text"><strong>Description:</strong> {{ club.description }}</p>
+
+                    <hr> {# Separator line #}
+
+                    {# --- Join/Leave Club Section --- #}
+                    {% if user.is_authenticated %}
+                        {% if is_member %}
+                            <p class="alert alert-success d-inline-block">You are a member of this club.</p>
+                            <form method="post" action="{% url 'leave_club' slug=club.slug %}" class="d-inline-block ms-3">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-warning">Leave Club</button>
+                            </form>
+                        {% else %}
+                            <form method="post" action="{% url 'join_club' slug=club.slug %}">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-success">Join Club</button>
+                            </form>
+                        {% endif %}
+                    {% else %}
+                        <p><a href="{% url 'login' %}?next={{ request.path }}" class="btn btn-info">Log in to join this club</a></p>
+                    {% endif %}
+
+                    <hr> {# Separator line #}
+
+                    {# --- Club Members List --- #}
+                    <h2 class="mt-4">Members ({{ members.count }})</h2>
+                    {% if members %}
+                        <ul class="list-group list-group-flush">
+                            {% for member in members %}
+                                <li class="list-group-item">{{ member.get_full_name|default:member.username }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p class="text-muted">No members yet.</p>
+                    {% endif %}
+
+                    <hr> {# Separator line #}
+
+                    {# --- Feedback & Ratings Section (using our new feedback app) --- #}
+                    {% if user.is_authenticated %}
+                        {# Link to the feedback submission page for this specific club #}
+                        <a href="{% url 'submit_feedback' model_name='club' identifier=club.slug %}" class="btn btn-primary mb-4">
+                            <i class="bi bi-pencil-square me-1"></i> Give Feedback & Rate This Club
+                        </a>
+                    {% else %}
+                        <div class="alert alert-info mt-3" role="alert">
+                            Please <a href="{% url 'login' %}?next={{ request.path }}">log in</a> to give feedback or rate this club.
+                        </div>
+                    {% endif %}
+
+                    {# Include the template that lists all feedback and ratings for this object #}
+                    {# This will display the average rating, comments, and individual ratings #}
+                    {# It expects 'content_object', 'model_name', and 'identifier' in its context #}
+                    {% include 'feedback/object_feedback_list.html' with content_object=club model_name='club' identifier=club.slug %}
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

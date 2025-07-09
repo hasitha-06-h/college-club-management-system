@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Club List{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <h1 class="mb-4 text-center">All Clubs</h1>
+
+    {% if user.is_authenticated and user.user_type == 'college_admin' %}
+    <div class="text-end mb-4">
+        <a href="{% url 'club_create' %}" class="btn btn-primary">Create New Club</a>
+    </div>
+    {% endif %}
+
+    {% if clubs %}
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        {% for club in clubs %}
+        <div class="col">
+            <div class="card h-100 shadow-sm">
+                {% if club.photo %} {# THIS LINE CHANGED: from club.image to club.photo #}
+                    <img src="{{ club.photo.url }}" class="card-img-top" alt="{{ club.title }} Image" style="height: 200px; object-fit: cover;"> {# THIS LINE CHANGED: from club.image.url to club.photo.url #}
+                {% else %}
+                    <img src="{% static 'img/default_club_image.png' %}" class="card-img-top" alt="Default Club Image" style="height: 200px; object-fit: cover;">
+                {% endif %}
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">{{ club.title }}</h5>
+                    <p class="card-text text-muted mb-2">Manager: {{ club.manager.username }}</p>
+                    <p class="card-text">{{ club.description|truncatechars:100 }}</p>
+                    <div class="mt-auto d-flex justify-content-between align-items-center">
+                        <a href="{% url 'club_detail' club.slug %}" class="btn btn-info btn-sm">View Details</a>
+                        {% if user.is_authenticated and user in club.members.all %}
+                            <span class="badge bg-success ms-2">Member</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    {# Pagination controls #}
+    {% if is_paginated %}
+    <nav aria-label="Club pagination" class="mt-4">
+        <ul class="pagination justify-content-center">
+            {% if page_obj.has_previous %}
+                <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a></li>
+            {% else %}
+                <li class="page-item disabled"><span class="page-link">Previous</span></li>
+            {% endif %}
+
+            {% for i in paginator.page_range %}
+                {% if page_obj.number == i %}
+                    <li class="page-item active"><span class="page-link">{{ i }}</span></li>
+                {% else %}
+                    <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+                {% endif %}
+            {% endfor %}
+
+            {% if page_obj.has_next %}
+                <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a></li>
+            {% else %}
+                <li class="page-item disabled"><span class="page-link">Next</span></li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+
+    {% else %}
+    <p class="text-center">No clubs found. The admin can add new clubs.</p>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block title %}Confirm Delete Announcement{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-danger text-white">
+                    <h2 class="card-title mb-0">Confirm Delete</h2>
+                </div>
+                <div class="card-body">
+                    <p class="lead">Are you sure you want to delete the announcement:</p>
+                    <h4 class="text-danger">{{ announcement.title }}</h4>
+                    <p class="text-muted">This action cannot be undone.</p>
+
+                    <form method="post">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger mt-3">Yes, Delete</button>
+                        <a href="{% url 'announcement_list' %}" class="btn btn-secondary mt-3 ms-2">Cancel</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

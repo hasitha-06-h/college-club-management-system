@@ -1,0 +1,42 @@
+{# feedback/templates/feedback/feedback_form.html #}
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Submit Feedback for {{ content_object.title|default:content_object }}{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h2 class="card-title mb-0">Submit Feedback & Rating for "{{ content_object.title|default:content_object }}"</h2>
+                </div>
+                <div class="card-body">
+                    <p class="lead mb-4">Your opinion matters! Please share your thoughts or rate this {{ model_name }}.</p>
+
+                    <div class="mb-5">
+                        <h4>Leave a Comment</h4>
+                        <form method="post" action="{% url 'submit_feedback' model_name=model_name identifier=identifier %}">
+                            {% csrf_token %}
+                            {{ feedback_form.as_p }}
+                            <button type="submit" name="submit_feedback" class="btn btn-success mt-3">Submit Comment</button>
+                        </form>
+                    </div>
+
+                    <hr class="my-4">
+
+                    <div>
+                        <h4>Rate this {{ model_name }}</h4>
+                        <form method="post" action="{% url 'submit_feedback' model_name=model_name identifier=identifier %}">
+                            {% csrf_token %}
+                            {{ rating_form.as_p }}
+                            <button type="submit" name="submit_rating" class="btn btn-warning mt-3">Submit Rating</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

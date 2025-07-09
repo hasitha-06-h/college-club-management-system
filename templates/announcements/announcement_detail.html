@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ announcement.title }}{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h1 class="card-title">{{ announcement.title }}</h1>
+                    <h6 class="card-subtitle mb-3 text-muted">
+                        Posted by {{ announcement.author.username }} on {{ announcement.created_at|date:"M d, Y, P" }}
+                        {% if not announcement.is_global %}
+                            - For: <a href="{% url 'club_detail' announcement.club.slug %}">{{ announcement.club.title }}</a>
+                        {% else %}
+                            - <span class="badge bg-primary">Global Announcement</span>
+                        {% endif %}
+                    </h6>
+                    <hr>
+                    <p class="card-text">{{ announcement.content|linebreaksbr }}</p>
+                    
+                    <div class="mt-4 d-flex justify-content-end">
+                        {% if user.is_authenticated %}
+                            {% if user.user_type == 'college_admin' or announcement.author == user %}
+                                <a href="{% url 'announcement_update' announcement.pk %}" class="btn btn-outline-secondary btn-sm me-2">Edit</a>
+                            {% endif %}
+                            {% if user.user_type == 'college_admin' %}
+                                <a href="{% url 'announcement_delete' announcement.pk %}" class="btn btn-outline-danger btn-sm">Delete</a>
+                            {% endif %}
+                        {% endif %}
+                        <a href="{% url 'announcement_list' %}" class="btn btn-outline-info btn-sm ms-auto">Back to Announcements</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

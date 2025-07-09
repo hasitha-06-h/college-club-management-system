@@ -1,0 +1,163 @@
+{% load static %} {# This line is essential to load static files like CSS and JS #}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}College Club Management System{% endblock %}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    
+    {# Favicon (optional) #}
+    <link rel="icon" href="{% static 'img/favicon.ico' %}" type="image/x-icon">
+
+    {# Main Stylesheet #}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    
+    {# Bootstrap CSS (optional, but highly recommended for quick styling) #}
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+
+    {# BOOTSTRAP ICONS CSS - ADD THIS LINE! (Used in feedback/club detail pages) #}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    {# Custom CSS files for specific pages can be added here using another block #}
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="{% url 'home' %}">
+                    <img src="{% static 'img/education-student-club-logo-design-260nw-2257850501.webp' %}" alt="Logo" width="30" height="24" class="d-inline-block align-text-top me-2">
+                    CCMS
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'club_list' %}">Clubs</a>
+                        </li>
+                        <li class="nav-item">
+                            {# Temporarily linking to a placeholder, replace with actual event list URL later #}
+                            <a class="nav-link" href="{% url 'event_calendar' %}">Events</a> {# Assuming 'event_calendar' is your events list URL #}
+                        </li>
+                        <li class="nav-item">
+                            {# UPDATED: Link to the actual announcements list page #}
+                            <a class="nav-link" href="{% url 'announcement_list' %}">Announcements</a> {# <-- CHANGED THIS LINE #}
+                        </li>
+                        <li class="nav-item">
+                            {# UPDATED: Link to the feedback form for a specific club (e.g., 'ecell') #}
+                            {# You will need to replace 'ecell' with a slug of an actual club you have in your database #}
+                            <a class="nav-link" href="{% url 'submit_feedback' model_name='club' identifier='ecell' %}">Feedback</a> {# <-- CHANGED THIS LINE #}
+                        </li>
+                    </ul>
+                    <ul class="navbar-nav ms-auto">
+                        {% if user.is_authenticated %}
+                            <li class="nav-item dropdown">
+                                {# FIX: Changed ID from navbarDropdown to navbarDropdownUser #}
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownUser" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="bi bi-person-circle me-1"></i> Hello, {{ user.username }}! {# Changed to Bootstrap Icon #}
+                                </a>
+                                {# FIX: Changed aria-labelledby to match the new ID #}
+                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownUser">
+                                    <li><h6 class="dropdown-header">Logged in as: {{ user.user_type|capfirst }}</h6></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item" href="#">Your Profile</a></li> {# Replace with actual profile URL #}
+                                    {% if user.is_college_admin %}
+                                        <li><a class="dropdown-item" href="{% url 'club_create' %}">Create Club</a></li>
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li><a class="dropdown-item text-danger" href="{% url 'admin:index' %}">Admin Panel</a></li>
+                                    {% elif user.is_club_officer %} {# Assuming 'is_club_officer' is a property/method on your User model #}
+                                            <li><a class="dropdown-item" href="#">Manage My Club(s)</a></li> {# TODO: Link to officer's club management dashboard #}
+                                    {% endif %}
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li>
+                                        <form action="{% url 'logout' %}" method="post">
+                                            {% csrf_token %}
+                                            <button type="submit" class="dropdown-item">Logout</button>
+                                        </form>
+                                    </li>
+                                </ul>
+                            </li>
+                        {% else %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'login' %}">Login</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'signup' %}">Sign Up</a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container mt-4">
+        {# Django Messages Framework #}
+        {% if messages %}
+            <div class="message-container">
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        {# Main content of the specific page goes here #}
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <footer class="bg-light text-center text-lg-start mt-5 py-3">
+        <div class="container p-4">
+            <div class="row">
+                <div class="col-lg-6 col-md-12 mb-4 mb-md-0">
+                    <h5 class="text-uppercase">About CCMS</h5>
+                    <p>
+                        Your central hub for college clubs and events. Stay updated, join clubs, and manage your campus activities.
+                    </p>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-4 mb-md-0">
+                    <h5 class="text-uppercase">Links</h5>
+                    <ul class="list-unstyled mb-0">
+                        <li><a href="{% url 'home' %}" class="text-dark">Home</a></li>
+                        <li><a href="{% url 'club_list' %}" class="text-dark">Clubs</a></li>
+                        {# Future links #}
+                        <li><a href="{% url 'event_calendar' %}" class="text-dark">Events Calendar</a></li> {# Assuming 'event_calendar' is your events list URL #}
+                        <li><a href="#" class="text-dark">Contact Us</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-4 mb-md-0">
+                    <h5 class="text-uppercase">Connect</h5>
+                    <ul class="list-unstyled mb-0">
+                        <li><a href="#" class="text-dark"><i class="fab fa-facebook-f"></i> Facebook</a></li>
+                        <li><a href="#" class="text-dark"><i class="fab fa-twitter"></i> Twitter</a></li>
+                        <li><a href="#" class="text-dark"><i class="fab fa-instagram"></i> Instagram</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="text-center p-3" style="background-color: rgba(0, 0, 0, 0.2);">
+            © 2025 College Club Management System. All rights reserved.
+        </div>
+    </footer>
+
+    {# Bootstrap JS Bundle (popper.js included) #}
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    
+    {# Font Awesome for icons (optional) #}
+    {# If you are using Font Awesome via CDN, replace the placeholder URL with your kit code, OR use Bootstrap Icons #}
+    {# <script src="https://kit.fontawesome.com/your-font-awesome-kit-code.js" crossorigin="anonymous"></script> #}
+    
+    {# Main JavaScript file #}
+    <script src="{% static 'js/script.js' %}"></script>
+
+    {# Custom JS files for specific pages can be added here using another block #}
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

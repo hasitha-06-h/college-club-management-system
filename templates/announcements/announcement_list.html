@@ -1,0 +1,229 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Announcements{% endblock %}
+
+{% block extra_css %}
+    {# --- EMBEDDED CSS FOR ANNOUNCEMENTS --- #}
+    <style>
+        /* General styling for the announcement list container */
+        .announcements-container {
+            padding: 40px 0;
+            background-color: #f8f9fa; /* Light background for the section */
+        }
+
+        /* Heading styling */
+        .announcements-container h1 {
+            font-family: 'Montserrat', sans-serif; /* Example Google Font */
+            font-weight: 700;
+            color: #343a40; /* Darker text */
+            margin-bottom: 30px;
+            position: relative;
+            padding-bottom: 10px;
+        }
+
+        .announcements-container h1::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            bottom: 0;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background-color: #007bff; /* Primary brand color */
+            border-radius: 2px;
+        }
+
+        /* Create Announcement Button */
+        .announcements-container .btn-primary {
+            background-color: #28a745; /* Green for create action */
+            border-color: #28a745;
+            font-weight: 600;
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
+
+        .announcements-container .btn-primary:hover {
+            background-color: #218838;
+            border-color: #1e7e34;
+        }
+
+        /* Announcement Card Styling */
+        .announcements-container .card {
+            border: none;
+            border-radius: 12px; /* More rounded corners */
+            overflow: hidden;
+            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08); /* Subtle shadow */
+        }
+
+        .announcements-container .card:hover {
+            transform: translateY(-5px); /* Lift effect on hover */
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15); /* More pronounced shadow on hover */
+        }
+
+        .announcements-container .card-body {
+            padding: 25px;
+        }
+
+        .announcements-container .card-title {
+            font-size: 1.5rem;
+            color: #007bff; /* Primary color for titles */
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .announcements-container .card-subtitle {
+            font-size: 0.85rem;
+            color: #6c757d; /* Lighter text for subtitle */
+            margin-bottom: 15px;
+        }
+
+        .announcements-container .card-text {
+            color: #495057; /* Darker body text */
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        /* Badges for Global/Club */
+        .announcements-container .badge {
+            font-size: 0.75rem;
+            padding: 0.4em 0.7em;
+            border-radius: 0.3rem;
+            font-weight: 600;
+        }
+        .announcements-container .badge.bg-primary {
+            background-color: #007bff !important;
+        }
+        .announcements-container .badge.bg-secondary {
+            background-color: #6c757d !important;
+        }
+
+        /* Action Buttons within card */
+        .announcements-container .btn-info {
+            background-color: #17a2b8;
+            border-color: #17a2b8;
+        }
+        .announcements-container .btn-info:hover {
+            background-color: #138496;
+            border-color: #117a8b;
+        }
+
+        .announcements-container .btn-outline-secondary {
+            border-color: #6c757d;
+            color: #6c757d;
+        }
+        .announcements-container .btn-outline-secondary:hover {
+            background-color: #6c757d;
+            color: #fff;
+        }
+
+        .announcements-container .btn-outline-danger {
+            border-color: #dc3545;
+            color: #dc3545;
+        }
+        .announcements-container .btn-outline-danger:hover {
+            background-color: #dc3545;
+            color: #fff;
+        }
+
+        /* No announcements message */
+        .announcements-container .lead {
+            color: #6c757d;
+            margin-top: 50px;
+        }
+
+        /* Pagination Styling (already decent with Bootstrap, but can be customized) */
+        .pagination .page-item .page-link {
+            color: #007bff;
+            border-color: #dee2e6;
+        }
+
+        .pagination .page-item.active .page-link {
+            background-color: #007bff;
+            border-color: #007bff;
+            color: white;
+        }
+        .pagination .page-item.disabled .page-link {
+            color: #adb5bd;
+        }
+    </style>
+    {# --- END EMBEDDED CSS --- #}
+{% endblock %}
+
+{% block content %}
+<div class="container py-5 announcements-container"> {# <--- ADDED THE CLASS HERE #}
+    <h1 class="mb-4 text-center">Announcements</h1>
+
+    {% if user.is_authenticated and user.user_type in 'college_admin' or user.user_type == 'club_manager' %}
+    <div class="text-end mb-4">
+        <a href="{% url 'announcement_create' %}" class="btn btn-primary">Create New Announcement</a>
+    </div>
+    {% endif %}
+
+    {% if announcements %}
+    <div class="row row-cols-1 g-4">
+        {% for announcement in announcements %}
+        <div class="col">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">{{ announcement.title }}</h5>
+                    <h6 class="card-subtitle mb-2 text-muted">
+                        Posted by {{ announcement.author.username }} on {{ announcement.created_at|date:"M d, Y" }}
+                        {% if not announcement.is_global %}
+                            - <span class="badge bg-secondary">{{ announcement.club.title }}</span>
+                        {% else %}
+                            - <span class="badge bg-primary">Global</span>
+                        {% endif %}
+                    </h6>
+                    <p class="card-text">{{ announcement.content|linebreaksbr|truncatechars:200 }}</p>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <a href="{% url 'announcement_detail' announcement.pk %}" class="btn btn-info btn-sm">View Details</a>
+
+                        {% if user.is_authenticated %}
+                            {# Edit/Delete buttons for authorized users #}
+                            {% if user.user_type == 'college_admin' or announcement.author == user %}
+                                <a href="{% url 'announcement_update' announcement.pk %}" class="btn btn-outline-secondary btn-sm ms-2">Edit</a>
+                            {% endif %}
+                            {% if user.user_type == 'college_admin' %} {# Only admin can delete #}
+                                <a href="{% url 'announcement_delete' announcement.pk %}" class="btn btn-outline-danger btn-sm ms-2">Delete</a>
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    {# Pagination controls #}
+    {% if is_paginated %}
+    <nav aria-label="Announcement pagination" class="mt-4">
+        <ul class="pagination justify-content-center">
+            {% if page_obj.has_previous %}
+                <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a></li>
+            {% else %}
+                <li class="page-item disabled"><span class="page-link">Previous</span></li>
+            {% endif %}
+
+            {% for i in paginator.page_range %}
+                {% if page_obj.number == i %}
+                    <li class="page-item active"><span class="page-link">{{ i }}</span></li>
+                {% else %}
+                    <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+                {% endif %}
+            {% endfor %}
+
+            {% if page_obj.has_next %}
+                <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a></li>
+            {% else %}
+                <li class="page-item disabled"><span class="page-link">Next</span></li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+
+    {% else %}
+    <p class="text-center lead">No announcements to display.</p>
+    {% endif %}
+</div>
+{% endblock %}

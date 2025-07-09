@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+    {% if form.instance.pk %}Edit Announcement{% else %}Create Announcement{% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h2 class="card-title mb-0">
+                        {% if form.instance.pk %}Edit Announcement{% else %}Create New Announcement{% endif %}
+                    </h2>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        {{ form.as_p }}
+                        <button type="submit" class="btn btn-success mt-3">
+                            {% if form.instance.pk %}Update Announcement{% else %}Create Announcement{% endif %}
+                        </button>
+                        <a href="{% url 'announcement_list' %}" class="btn btn-secondary mt-3 ms-2">Cancel</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{# JavaScript for toggling club field based on is_global checkbox #}
+<script>
+    function toggleClubField(checkbox) {
+        var clubFieldDiv = document.querySelector('p:has(#id_club)'); // Select the parent <p> of the club field
+        if (checkbox.checked) {
+            clubFieldDiv.style.display = 'none';
+        } else {
+            clubFieldDiv.style.display = 'block';
+        }
+    }
+
+    // Call on page load to set initial state
+    document.addEventListener('DOMContentLoaded', function() {
+        var isGlobalCheckbox = document.getElementById('id_is_global');
+        if (isGlobalCheckbox) {
+            toggleClubField(isGlobalCheckbox);
+        }
+    });
+</script>
+{% endblock %}

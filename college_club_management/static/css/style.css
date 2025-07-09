@@ -1,0 +1,175 @@
+/* Custom Styles for College Club Management */
+
+/* Basic body and container padding */
+body {
+    font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    background-color: #f4f7f6; /* Light background */
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+main {
+    flex: 1; /* Ensures main content takes available space pushing footer down */
+}
+
+/* Navbar specific styling */
+.navbar-brand {
+    font-weight: bold;
+    font-size: 1.4rem;
+}
+.navbar-nav .nav-link {
+    font-weight: 500;
+}
+.navbar-dark .navbar-nav .nav-link.active {
+    color: #fff;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 5px;
+    padding: 8px 12px;
+}
+.navbar-dark .navbar-toggler-icon {
+    filter: invert(1); /* Makes toggler icon white for dark nav */
+}
+
+/* Footer styling */
+footer {
+    background-color: #212529 !important; /* Darker than navbar for distinction */
+    color: #f8f9fa;
+    padding: 20px 0;
+    font-size: 0.9em;
+}
+
+/* Alert messages */
+.alert {
+    margin-bottom: 1rem;
+    font-size: 0.95rem;
+}
+.alert-success { background-color: #d4edda; color: #155724; border-color: #c3e6cb; }
+.alert-info { background-color: #d1ecf1; color: #0c5460; border-color: #bee5eb; }
+.alert-warning { background-color: #fff3cd; color: #856404; border-color: #ffeeba; }
+.alert-danger { background-color: #f8d7da; color: #721c24; border-color: #f5c6cb; }
+
+/* Custom Hero Section */
+/* Styles for this are inline in home.html due to background image path */
+
+/* Announcements Ticker (copied from home.html for consistent styling) */
+.announcements-ticker {
+    background-color: #e9ecef;
+    border-top: 1px solid #dee2e6;
+    border-bottom: 1px solid #dee2e6;
+    padding: 10px 0;
+    overflow: hidden;
+    white-space: nowrap;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.08);
+    position: relative;
+}
+.ticker-wrap {
+    display: inline-block;
+    padding-left: 100%;
+    animation: ticker linear infinite;
+    animation-duration: 40s;
+}
+.ticker-item {
+    display: inline-block;
+    padding-right: 40px;
+    color: #343a40;
+    font-size: 1em;
+    font-weight: 500;
+}
+@keyframes ticker {
+    0% { transform: translate3d(0, 0, 0); }
+    100% { transform: translate3d(-50%, 0, 0); }
+}
+.announcements-ticker:hover .ticker-wrap {
+    animation-play-state: paused;
+}
+
+/* Card Styling */
+.card {
+    border-radius: 8px;
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+}
+.card-img-top {
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+}
+.card-title {
+    font-size: 1.3rem;
+    font-weight: 600;
+}
+.card-text {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: #555;
+}
+.btn-outline-primary {
+    color: #007bff;
+    border-color: #007bff;
+}
+.btn-outline-primary:hover {
+    background-color: #007bff;
+    color: #fff;
+}
+
+/* Forms */
+form p {
+    margin-bottom: 1rem;
+}
+form input[type="text"],
+form input[type="email"],
+form input[type="password"],
+form textarea,
+form select {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #ced4da;
+    border-radius: 0.25rem;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+form input:focus,
+form textarea:focus,
+form select:focus {
+    border-color: #80bdff;
+    outline: 0;
+    box-shadow: 0 0 0 0.25rem rgba(0, 123, 255, 0.25);
+}
+
+/* Star Rating (from feedback/templates/feedback/rate_club.html) */
+.star-rating label {
+    font-size: 2.5em; /* Larger stars */
+    color: #ccc;
+    cursor: pointer;
+    display: inline-block;
+    margin: 0;
+    padding: 0 3px; /* Closer stars */
+    transition: color 0.2s ease-in-out;
+}
+.star-rating input[type="radio"]:checked ~ label {
+    color: #ffc107; /* Gold color for selected stars */
+}
+.star-rating label:hover,
+.star-rating label:hover ~ label {
+    color: #ffc107;
+}
+
+/* Specific button styles */
+.btn-primary { background-color: #007bff; border-color: #007bff; }
+.btn-primary:hover { background-color: #0056b3; border-color: #0056b3; }
+.btn-success { background-color: #28a745; border-color: #28a745; }
+.btn-success:hover { background-color: #218838; border-color: #1e7e34; }
+.btn-warning { background-color: #ffc107; border-color: #ffc107; color: #212529; }
+.btn-warning:hover { background-color: #e0a800; border-color: #d39e00; }
+.btn-danger { background-color: #dc3545; border-color: #dc3545; }
+.btn-danger:hover { background-color: #c82333; border-color: #bd2130; }
+.btn-info { background-color: #17a2b8; border-color: #17a2b8; }
+.btn-info:hover { background-color: #138496; border-color: #117a8b; }
+.btn-secondary { background-color: #6c757d; border-color: #6c757d; }
+.btn-secondary:hover { background-color: #5a6268; border-color: #545b62; }
+
+/* Add this to static/img/ folder (example, replace with your own) */
+/* college_hero_bg.jpg */
+/* default_club.png */

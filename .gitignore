@@ -1,0 +1,29 @@
+# .gitignore
+
+# Virtual environment
+venv/
+*.env
+.flaskenv
+
+# Python specific
+*.pyc
+__pycache__/
+*.sqlite3
+celerybeat-schedule
+.pytest_cache/
+
+# Django specific
+media/       # Your user-uploaded media files
+staticfiles/ # Your collected static files
+db.sqlite3   # Your default local SQLite database file
+
+# IDEs
+.vscode/
+.idea/
+
+# Operating System files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
