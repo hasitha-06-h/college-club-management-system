@@ -125,7 +125,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'"""
 
 # college_club_management/settings.py
 
-# college_club_management/settings.py
+## college_club_management/settings.py
 
 import os
 from pathlib import Path
@@ -152,7 +152,7 @@ DEBUG = os.environ.get('DJANGO_DEBUG', 'False').lower() == 'true'
 # ALLOWED_HOSTS defines the domain names and IP addresses that your Django project can serve.
 # Keep 127.0.0.1 and localhost for local development.
 # Render automatically sets RENDER_EXTERNAL_HOSTNAME, which will be added here.
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
+ALLOWED_HOSTS = ['127.000.1', 'localhost']
 
 RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
 if RENDER_EXTERNAL_HOSTNAME:
@@ -222,9 +222,15 @@ WSGI_APPLICATION = 'college_club_management.wsgi.application'
 # Uses dj_database_url to parse the 'DATABASE_URL' environment variable from Render.
 # This allows connection to a PostgreSQL database on Render.
 # THIS HAS BEEN CORRECTED: Removed the SQLite fallback. Now it *requires* DATABASE_URL.
+DATABASE_URL = os.environ.get('DATABASE_URL')
+# --- ADDED FOR DEBUGGING ---
+print(f"DEBUG: DATABASE_URL from environment is: {DATABASE_URL}")
+print(f"DEBUG: Type of DATABASE_URL is: {type(DATABASE_URL)}")
+# --- END DEBUGGING ADDITION ---
+
 DATABASES = {
     'default': dj_database_url.config(
-        default=os.environ.get('DATABASE_URL'), # Removed the SQLite fallback
+        default=DATABASE_URL, # Removed the SQLite fallback
         conn_max_age=600 # Optional: Controls connection lifetime for performance
     )
 }
