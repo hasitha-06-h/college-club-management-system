@@ -125,7 +125,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'"""
 
 # college_club_management/settings.py
 
-## college_club_management/settings.py
+# college_club_management/settings.py
 
 import os
 from pathlib import Path
@@ -278,8 +278,15 @@ STATICFILES_DIRS = [
 ]
 
 # Whitenoise storage backend for compressed and cached static files for optimal performance
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+# You should typically use the STORAGES setting below for Django 4.0+
+# STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage' # COMMENT OUT OR REMOVE THIS LINE
 
+# ADD THIS NEW SECTION FOR WHITEBOX STORAGES
+STORAGES = {
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+}
 
 # --- Media files (user uploaded content) Configuration ---
 # For local development, media files are stored locally.
