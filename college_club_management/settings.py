@@ -146,7 +146,8 @@ SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'your-very-strong-and-random-lo
 
 # SECURITY WARNING: don't run with debug turned on in production!
 # On Render, set 'DJANGO_DEBUG' to 'False' as an environment variable.
-DEBUG = os.environ.get('DJANGO_DEBUG', 'True') == 'True' # Converts 'True'/'False' string to a boolean
+# THIS LINE HAS BEEN CORRECTED: It now defaults to False unless explicitly 'true'.
+DEBUG = os.environ.get('DJANGO_DEBUG', 'False').lower() == 'true'
 
 # ALLOWED_HOSTS defines the domain names and IP addresses that your Django project can serve.
 # Keep 127.0.0.1 and localhost for local development.
@@ -220,10 +221,10 @@ WSGI_APPLICATION = 'college_club_management.wsgi.application'
 # --- Database Configuration ---
 # Uses dj_database_url to parse the 'DATABASE_URL' environment variable from Render.
 # This allows connection to a PostgreSQL database on Render.
-# For local development, it will fall back to SQLite if DATABASE_URL is not set.
+# THIS HAS BEEN CORRECTED: Removed the SQLite fallback. Now it *requires* DATABASE_URL.
 DATABASES = {
     'default': dj_database_url.config(
-        default=os.environ.get('DATABASE_URL', f'sqlite:///{BASE_DIR / "db.sqlite3"}'),
+        default=os.environ.get('DATABASE_URL'), # Removed the SQLite fallback
         conn_max_age=600 # Optional: Controls connection lifetime for performance
     )
 }
